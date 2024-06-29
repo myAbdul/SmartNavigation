@@ -50,9 +50,6 @@ android {
 }
 
 dependencies {
-    val nav_version = "2.7.7"
-    val lifecycle_version = "2.8.0"
-
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
@@ -68,6 +65,12 @@ dependencies {
     implementation(libs.logging.interceptor)
     implementation(libs.accompanist.permissions)
     implementation(libs.play.services.location)
+
+    val cameraxVersion = "1.3.1"
+    implementation (libs.androidx.camera.core)
+    implementation (libs.androidx.camera.camera2)
+    implementation (libs.androidx.camera.view)
+    implementation (libs.androidx.camera.lifecycle)
 
     // ViewModel
     implementation(libs.androidx.lifecycle.viewmodel.ktx)

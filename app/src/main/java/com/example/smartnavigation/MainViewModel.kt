@@ -1,5 +1,9 @@
 package com.example.smartnavigation
 
+import android.graphics.Bitmap
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import com.example.smartnavigation.api.ApiInstance
 import com.example.smartnavigation.api.facility.AddFacilityRequest
@@ -14,6 +18,7 @@ import kotlinx.coroutines.withContext
 
 class MainViewModel : ViewModel() {
     var user: User? = null
+    var facilityImage: Bitmap? by mutableStateOf(null)
     private val loginApi = ApiInstance.createService(LoginApi::class.java)
     private val registerApi = ApiInstance.createService(RegisterApi::class.java)
     private val facilityApi = ApiInstance.createService(FacilityApi::class.java)

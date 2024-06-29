@@ -3,10 +3,12 @@ package com.example.smartnavigation.view
 import android.Manifest
 import android.annotation.SuppressLint
 import android.widget.Toast
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -15,6 +17,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Button
+import androidx.compose.material3.Card
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -32,6 +35,8 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -40,6 +45,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.smartnavigation.MainViewModel
 import com.example.smartnavigation.api.facility.AddFacilityRequest
+import com.example.smartnavigation.navigate.NavRoutes
 import com.example.smartnavigation.theme.SmartNavigationTheme
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
@@ -85,6 +91,7 @@ fun AddFacilityScreen(
             listOf(
                 Manifest.permission.ACCESS_COARSE_LOCATION,
                 Manifest.permission.ACCESS_FINE_LOCATION,
+                Manifest.permission.CAMERA
             )
         )
         val context = LocalContext.current
@@ -103,6 +110,21 @@ fun AddFacilityScreen(
                     onValueChange = { name = it },
                     label = { Text("Name") },
                 )
+                Card(
+                    modifier = modifier
+                        .fillMaxHeight(0.5f),
+                    onClick = {
+                        navController.navigate(NavRoutes.CAMERA)
+                    },
+                ) {
+                    viewModel.facilityImage?.let {
+                        Image(
+                            bitmap = it.asImageBitmap(),
+                            contentDescription = "",
+                            contentScale = ContentScale.Crop
+                        )
+                    }
+                }
                 Button(
                     modifier = modifier,
                     onClick = {

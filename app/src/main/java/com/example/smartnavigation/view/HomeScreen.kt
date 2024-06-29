@@ -40,6 +40,7 @@ fun HomeScreen(navController: NavHostController, viewModel: MainViewModel) {
                 actions = {
                     IconButton(
                         onClick = {
+                            viewModel.facilityImage = null
                             navController.navigate(NavRoutes.ADD_FACILITY)
                         },
                     ) {
