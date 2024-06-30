@@ -44,7 +44,6 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.smartnavigation.MainViewModel
-import com.example.smartnavigation.api.facility.AddFacilityRequest
 import com.example.smartnavigation.navigate.NavRoutes
 import com.example.smartnavigation.theme.SmartNavigationTheme
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
@@ -52,7 +51,6 @@ import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
 import com.google.android.gms.tasks.CancellationTokenSource
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 @SuppressLint("MissingPermission")
@@ -83,7 +81,6 @@ fun AddFacilityScreen(
         val modifier = Modifier
             .padding(8.dp)
             .fillMaxWidth()
-        var name by remember { mutableStateOf("") }
         var loading by remember { mutableStateOf(false) }
         var loadingText by remember { mutableStateOf("") }
         val coroutineScope = rememberCoroutineScope()
@@ -106,8 +103,8 @@ fun AddFacilityScreen(
             if (permissionState.allPermissionsGranted) {
                 OutlinedTextField(
                     modifier = modifier,
-                    value = name,
-                    onValueChange = { name = it },
+                    value = viewModel.facilityName,
+                    onValueChange = { viewModel.facilityName = it },
                     label = { Text("Name") },
                 )
                 Card(
@@ -129,7 +126,7 @@ fun AddFacilityScreen(
                     modifier = modifier,
                     onClick = {
                         if (!loading) {
-                            if (name.isNotBlank()) {
+                            if (viewModel.facilityName.isNotBlank()) {
                                 loadingText = "Picking location..."
                                 loading = true
                                 fusedLocationProviderClient.getCurrentLocation(
@@ -140,12 +137,8 @@ fun AddFacilityScreen(
                                     coroutineScope.launch {
                                         try {
                                             viewModel.addFacility(
-                                                AddFacilityRequest(
-                                                    name,
-                                                    location.latitude,
-                                                    location.longitude,
-                                                    viewModel.user!!.userId
-                                                )
+                                                location.latitude,
+                                                location.longitude
                                             )
                                             Toast.makeText(
                                                 context,
