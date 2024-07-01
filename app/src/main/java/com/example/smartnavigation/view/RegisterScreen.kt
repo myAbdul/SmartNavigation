@@ -17,7 +17,6 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -38,7 +37,6 @@ import androidx.navigation.compose.rememberNavController
 import com.example.smartnavigation.MainViewModel
 import com.example.smartnavigation.api.register.RegisterRequest
 import com.example.smartnavigation.theme.SmartNavigationTheme
-import com.example.smartnavigation.theme.defaultPadding
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -157,8 +155,6 @@ fun RegisterScreen(navController: NavHostController, viewModel: MainViewModel) {
                                 .padding(8.dp)
                                 .width(24.dp)
                                 .height(24.dp),
-                            color = MaterialTheme.colorScheme.secondary,
-                            trackColor = MaterialTheme.colorScheme.surfaceVariant,
                         )
                     } else {
                         Text("Register")

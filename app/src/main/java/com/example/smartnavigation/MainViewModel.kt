@@ -13,6 +13,7 @@ import com.example.smartnavigation.api.login.LoginApi
 import com.example.smartnavigation.api.login.LoginRequest
 import com.example.smartnavigation.api.register.RegisterApi
 import com.example.smartnavigation.api.register.RegisterRequest
+import com.example.smartnavigation.model.Facility
 import com.example.smartnavigation.model.User
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -20,12 +21,14 @@ import java.io.ByteArrayOutputStream
 import kotlin.math.roundToInt
 
 class MainViewModel : ViewModel() {
-    var user: User? = null
-    var facilityName: String by mutableStateOf("")
-    var facilityImage: Bitmap? by mutableStateOf(null)
     private val loginApi = ApiInstance.createService(LoginApi::class.java)
     private val registerApi = ApiInstance.createService(RegisterApi::class.java)
     private val facilityApi = ApiInstance.createService(FacilityApi::class.java)
+
+    var user: User? = null
+    var facilityName: String by mutableStateOf("")
+    var facilityImage: Bitmap? by mutableStateOf(null)
+    var facilityList: List<Facility> by mutableStateOf(listOf())
 
     suspend fun login(request: LoginRequest) {
         withContext(Dispatchers.IO) {
@@ -49,6 +52,16 @@ class MainViewModel : ViewModel() {
                 user!!.userId
             )
             facilityApi.addFacility(request)
+        }
+    }
+
+    suspend fun getAllFacilities() {
+        withContext(Dispatchers.IO) {
+            try {
+                facilityList = facilityApi.getAllFacilities()
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
         }
     }
 
