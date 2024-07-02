@@ -23,7 +23,7 @@ object NavRoutes {
 fun NavHost(
     navController: NavHostController, viewModel: MainViewModel
 ) {
-    NavHost(navController = navController, startDestination = NavRoutes.HOME) {
+    NavHost(navController = navController, startDestination = NavRoutes.LOGIN) {
         composable(NavRoutes.LOGIN) {
             LoginScreen(navController, viewModel)
         }

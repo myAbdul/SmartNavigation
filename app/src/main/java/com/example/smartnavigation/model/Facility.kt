@@ -7,5 +7,5 @@ data class Facility(
     val name: String,
     val latitude: Double,
     val longitude: Double,
-    val image: String
+    val image: String?
 )

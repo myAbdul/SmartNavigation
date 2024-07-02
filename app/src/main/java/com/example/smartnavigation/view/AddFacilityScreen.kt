@@ -145,13 +145,15 @@ fun AddFacilityScreen(
                                                 "Facility added successfully!",
                                                 Toast.LENGTH_LONG
                                             ).show()
+                                            loading = false
                                             navController.popBackStack()
                                         } catch (e: Exception) {
                                             e.printStackTrace()
+                                            loading = false
                                         }
                                     }
                                 }.addOnFailureListener { exception ->
-
+                                    loading = false
                                 }
                             }
                         }
