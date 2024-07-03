@@ -1,7 +1,12 @@
 package com.example.smartnavigation.view
 
+import android.content.Intent
+import android.net.Uri
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -13,6 +18,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Image
+import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material3.Card
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.CircularProgressIndicator
@@ -32,6 +38,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
@@ -71,6 +78,7 @@ fun HomeScreen(navController: NavHostController, viewModel: MainViewModel) {
     ) { innerPadding ->
         var loading by remember { mutableStateOf(false) }
         val modifier = Modifier.padding(defaultPadding)
+        val context = LocalContext.current
 
         if (loading) {
             CircularProgressIndicator(
@@ -97,12 +105,27 @@ fun HomeScreen(navController: NavHostController, viewModel: MainViewModel) {
                                 .fillMaxWidth()
                                 .padding(defaultPadding)
                         ) {
-                            Text(modifier = Modifier.padding(4.dp), text = facility.name)
+                            Row(
+                                modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceBetween
+                            ) {
+                                Text(modifier = Modifier.padding(end = 8.dp), text = facility.name)
+                                Icon(
+                                    modifier = Modifier.clickable {
+                                        val intent = Intent(Intent.ACTION_VIEW).apply {
+                                            data = Uri.parse("geo:${facility.latitude},${facility.longitude}")
+                                        }
+                                        context.startActivity(intent)
+                                    },
+                                    imageVector = Icons.Filled.LocationOn,
+                                    contentDescription = ""
+                                )
+                            }
                             if (image != null) {
                                 Image(
                                     modifier = modifier
                                         .fillMaxWidth()
-                                        .height(150.dp)
+                                        .height(200.dp)
                                         .clip(RoundedCornerShape(16.dp)),
                                     bitmap = image.asImageBitmap(),
                                     contentDescription = "",
@@ -113,7 +136,7 @@ fun HomeScreen(navController: NavHostController, viewModel: MainViewModel) {
                                     modifier = Modifier
                                         .padding(4.dp)
                                         .fillMaxWidth()
-                                        .height(100.dp)
+                                        .height(200.dp)
                                         .clip(RoundedCornerShape(16.dp)),
                                     imageVector = Icons.Filled.Image,
                                     contentDescription = "",

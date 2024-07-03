@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.AddAPhoto
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CenterAlignedTopAppBar
@@ -114,9 +115,17 @@ fun AddFacilityScreen(
                         navController.navigate(NavRoutes.CAMERA)
                     },
                 ) {
-                    viewModel.facilityImage?.let {
+                    val image = viewModel.facilityImage
+                    if (image != null) {
                         Image(
-                            bitmap = it.asImageBitmap(),
+                            bitmap = image.asImageBitmap(),
+                            contentDescription = "",
+                            contentScale = ContentScale.Crop
+                        )
+                    } else {
+                        Image(
+                            modifier = Modifier.fillMaxSize().padding(50.dp),
+                            imageVector = Icons.Filled.AddAPhoto,
                             contentDescription = "",
                             contentScale = ContentScale.Crop
                         )
