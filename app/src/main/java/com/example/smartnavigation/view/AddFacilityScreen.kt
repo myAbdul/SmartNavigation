@@ -184,7 +184,7 @@ fun AddFacilityScreen(
                                 trackColor = MaterialTheme.colorScheme.surfaceVariant,
                             )
                         } else {
-                            Text("Register")
+                            Text("Add")
                         }
                     }
                 }
