@@ -65,8 +65,8 @@ dependencies {
     implementation(libs.logging.interceptor)
     implementation(libs.accompanist.permissions)
     implementation(libs.play.services.location)
+    implementation(libs.androidx.material)
 
-    val cameraxVersion = "1.3.1"
     implementation (libs.androidx.camera.core)
     implementation (libs.androidx.camera.camera2)
     implementation (libs.androidx.camera.view)

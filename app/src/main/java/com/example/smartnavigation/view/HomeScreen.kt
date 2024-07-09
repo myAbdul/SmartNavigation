@@ -1,158 +1,84 @@
 package com.example.smartnavigation.view
 
-import android.content.Intent
-import android.net.Uri
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.RoundedCornerShape
+//noinspection UsingMaterialAndMaterial3Libraries
+import androidx.compose.material.BottomNavigation
+import androidx.compose.material.BottomNavigationItem
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Image
-import androidx.compose.material.icons.filled.LocationOn
-import androidx.compose.material3.Card
-import androidx.compose.material3.CenterAlignedTopAppBar
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material.icons.filled.Business
+import androidx.compose.material.icons.filled.Class
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.asImageBitmap
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
+import androidx.navigation.NavDestination.Companion.hierarchy
+import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.smartnavigation.MainViewModel
-import com.example.smartnavigation.decodeImage
-import com.example.smartnavigation.navigate.NavRoutes
 import com.example.smartnavigation.theme.SmartNavigationTheme
-import com.example.smartnavigation.theme.defaultPadding
 
-@OptIn(ExperimentalMaterial3Api::class)
+sealed class HomeScreen(val route: String, val title: String, val imageVector: ImageVector) {
+    object ClassSchedules : HomeScreen("classSchedules", "Timetable", Icons.Filled.Class)
+    object Facilities : HomeScreen("facilities", "Facilities", Icons.Filled.Business)
+}
+
+val items = listOf(
+    HomeScreen.ClassSchedules,
+    HomeScreen.Facilities,
+)
+
 @Composable
 fun HomeScreen(navController: NavHostController, viewModel: MainViewModel) {
-    Scaffold(
-        modifier = Modifier.fillMaxSize(),
-        topBar = {
-            CenterAlignedTopAppBar(
-                title = {
-                    Text("Home")
+    val homeNavController = rememberNavController()
+    Scaffold(bottomBar = {
+        BottomNavigation {
+            val navBackStackEntry by homeNavController.currentBackStackEntryAsState()
+            val currentDestination = navBackStackEntry?.destination
+            items.forEach { screen ->
+                BottomNavigationItem(icon = {
+                    Icon(
+                        screen.imageVector, contentDescription = null
+                    )
                 },
-                actions = {
-                    IconButton(
-                        onClick = {
-                            viewModel.facilityName = ""
-                            viewModel.facilityImage = null
-                            navController.navigate(NavRoutes.ADD_FACILITY)
-                        },
-                    ) {
-                        Icon(
-                            imageVector = Icons.Filled.Add,
-                            contentDescription = "Localized description"
-                        )
-                    }
-                },
-            )
-        },
-    ) { innerPadding ->
-        var loading by remember { mutableStateOf(false) }
-        val modifier = Modifier.padding(defaultPadding)
-        val context = LocalContext.current
-
-        if (loading) {
-            CircularProgressIndicator(
-                modifier = Modifier
-                    .padding(24.dp)
-                    .width(24.dp)
-                    .height(24.dp)
-            )
-        } else {
-            LazyColumn(
-                modifier
-                    .padding(innerPadding)
-                    .fillMaxSize(),
-                horizontalAlignment = Alignment.CenterHorizontally,
-            ) {
-                items(viewModel.facilityList) { facility ->
-                    val image = facility.image?.let { decodeImage(it) }
-                    Card(
-                        modifier = modifier
-                            .fillMaxWidth(),
-                    ) {
-                        Column(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(defaultPadding)
-                        ) {
-                            Row(
-                                modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.SpaceBetween
-                            ) {
-                                Text(modifier = Modifier.padding(end = 8.dp), text = facility.name)
-                                Icon(
-                                    modifier = Modifier.clickable {
-                                        val intent = Intent(Intent.ACTION_VIEW).apply {
-                                            data = Uri.parse("geo:${facility.latitude},${facility.longitude}")
-                                        }
-                                        context.startActivity(intent)
-                                    },
-                                    imageVector = Icons.Filled.LocationOn,
-                                    contentDescription = ""
-                                )
+                    label = { Text(screen.title) },
+                    selected = currentDestination?.hierarchy?.any { it.route == screen.route } == true,
+                    onClick = {
+                        homeNavController.navigate(screen.route) {
+                            // Pop up to the start destination of the graph to
+                            // avoid building up a large stack of destinations
+                            // on the back stack as users select items
+                            popUpTo(homeNavController.graph.findStartDestination().id) {
+                                saveState = true
                             }
-                            if (image != null) {
-                                Image(
-                                    modifier = modifier
-                                        .fillMaxWidth()
-                                        .height(200.dp)
-                                        .clip(RoundedCornerShape(16.dp)),
-                                    bitmap = image.asImageBitmap(),
-                                    contentDescription = "",
-                                    contentScale = ContentScale.Crop
-                                )
-                            } else {
-                                Image(
-                                    modifier = Modifier
-                                        .padding(4.dp)
-                                        .fillMaxWidth()
-                                        .height(200.dp)
-                                        .clip(RoundedCornerShape(16.dp)),
-                                    imageVector = Icons.Filled.Image,
-                                    contentDescription = "",
-                                    contentScale = ContentScale.Crop
-                                )
-                            }
+                            // Avoid multiple copies of the same destination when
+                            // reselecting the same item
+                            launchSingleTop = true
+                            // Restore state when reselecting a previously selected item
+                            restoreState = true
                         }
-                    }
-                }
+                    })
             }
         }
-
-        LaunchedEffect(true) {
-            loading = true
-            viewModel.getAllFacilities()
-            loading = false
+    }) { innerPadding ->
+        NavHost(
+            homeNavController,
+            startDestination = HomeScreen.ClassSchedules.route,
+            Modifier.padding(innerPadding)
+        ) {
+            composable(HomeScreen.ClassSchedules.route) {
+                ClassSchedulesScreen(
+                    navController, viewModel
+                )
+            }
+            composable(HomeScreen.Facilities.route) { FacilitiesScreen(navController, viewModel) }
         }
     }
 }
