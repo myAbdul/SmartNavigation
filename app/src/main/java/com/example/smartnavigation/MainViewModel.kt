@@ -6,36 +6,40 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import com.example.smartnavigation.api.ApiInstance
-import com.example.smartnavigation.api.facility.AddFacilityRequest
-import com.example.smartnavigation.api.facility.FacilityApi
-import com.example.smartnavigation.api.login.LoginApi
-import com.example.smartnavigation.api.login.LoginRequest
-import com.example.smartnavigation.api.register.RegisterApi
-import com.example.smartnavigation.api.register.RegisterRequest
+import com.example.smartnavigation.api.SmartNavigationApi
+import com.example.smartnavigation.api.request.AddFacilityRequest
+import com.example.smartnavigation.api.request.LoginRequest
+import com.example.smartnavigation.api.request.RegisterRequest
+import com.example.smartnavigation.model.ClassSchedule
+import com.example.smartnavigation.model.College
+import com.example.smartnavigation.model.Department
 import com.example.smartnavigation.model.Facility
+import com.example.smartnavigation.model.Program
 import com.example.smartnavigation.model.User
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 class MainViewModel : ViewModel() {
-    private val loginApi = ApiInstance.createService(LoginApi::class.java)
-    private val registerApi = ApiInstance.createService(RegisterApi::class.java)
-    private val facilityApi = ApiInstance.createService(FacilityApi::class.java)
+    private val smartNavigationApi = ApiInstance.createService(SmartNavigationApi::class.java)
 
-    var user: User? = null
+    private var user: User? = null
     var facilityName: String by mutableStateOf("")
     var facilityImage: Bitmap? by mutableStateOf(null)
     var facilityList: List<Facility> by mutableStateOf(listOf())
+    var classScheduleList: List<ClassSchedule> by mutableStateOf(listOf())
+    var programList: List<Program> by mutableStateOf(listOf())
+    var collegeList: List<College> by mutableStateOf(listOf())
+    var departmentList: List<Department> by mutableStateOf(listOf())
 
     suspend fun login(request: LoginRequest) {
         withContext(Dispatchers.IO) {
-            user = loginApi.login(request)
+            user = smartNavigationApi.login(request)
         }
     }
 
     suspend fun register(request: RegisterRequest) {
         withContext(Dispatchers.IO) {
-            registerApi.register(request)
+            smartNavigationApi.register(request)
         }
     }
 
@@ -48,14 +52,37 @@ class MainViewModel : ViewModel() {
                 facilityImage?.let { decodeImage(it) },
                 user!!.userId
             )
-            facilityApi.addFacility(request)
+            smartNavigationApi.addFacility(request)
         }
     }
 
     suspend fun getAllFacilities() {
         withContext(Dispatchers.IO) {
             try {
-                facilityList = facilityApi.getAllFacilities()
+                facilityList = smartNavigationApi.getAllFacilities()
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+    }
+
+    suspend fun getClassSchedules(programId: Int) {
+        withContext(Dispatchers.IO) {
+            try {
+                classScheduleList = smartNavigationApi.getClassSchedules(programId)
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+    }
+
+    suspend fun getClassScheduleFormData() {
+        withContext(Dispatchers.IO) {
+            try {
+                val response = smartNavigationApi.getClassScheduleFormData()
+                programList = response.allPrograms
+                collegeList = response.allColleges
+                departmentList = response.allDepartments
             } catch (e: Exception) {
                 e.printStackTrace()
             }

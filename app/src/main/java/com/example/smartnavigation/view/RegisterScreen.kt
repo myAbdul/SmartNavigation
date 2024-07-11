@@ -35,7 +35,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.smartnavigation.MainViewModel
-import com.example.smartnavigation.api.register.RegisterRequest
+import com.example.smartnavigation.api.request.RegisterRequest
 import com.example.smartnavigation.theme.SmartNavigationTheme
 import kotlinx.coroutines.launch
 

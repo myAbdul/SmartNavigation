@@ -1,4 +1,4 @@
-package com.example.smartnavigation.api.register
+package com.example.smartnavigation.api.response
 
 import com.google.gson.annotations.SerializedName
 

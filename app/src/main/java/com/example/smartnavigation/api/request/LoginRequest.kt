@@ -1,4 +1,4 @@
-package com.example.smartnavigation.api.login
+package com.example.smartnavigation.api.request
 
 data class LoginRequest(
     val username: String,

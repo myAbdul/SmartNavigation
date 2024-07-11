@@ -33,7 +33,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.smartnavigation.MainViewModel
-import com.example.smartnavigation.api.login.LoginRequest
+import com.example.smartnavigation.api.request.LoginRequest
 import com.example.smartnavigation.navigate.NavRoutes
 import com.example.smartnavigation.theme.SmartNavigationTheme
 import com.example.smartnavigation.theme.defaultPadding
