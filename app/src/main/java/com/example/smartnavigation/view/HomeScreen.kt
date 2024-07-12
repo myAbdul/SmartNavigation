@@ -1,5 +1,6 @@
 package com.example.smartnavigation.view
 
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 //noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.material.BottomNavigation
@@ -66,7 +67,7 @@ fun HomeScreen(navController: NavHostController, viewModel: MainViewModel) {
         NavHost(
             homeNavController,
             startDestination = HomeScreen.ClassSchedules.route,
-            Modifier.padding(innerPadding)
+            Modifier.fillMaxSize().padding(innerPadding)
         ) {
             composable(HomeScreen.ClassSchedules.route) {
                 ClassSchedulesScreen(
