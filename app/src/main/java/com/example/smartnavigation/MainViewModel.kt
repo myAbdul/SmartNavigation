@@ -7,6 +7,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import com.example.smartnavigation.api.ApiInstance
 import com.example.smartnavigation.api.SmartNavigationApi
+import com.example.smartnavigation.api.request.AddClassScheduleRequest
 import com.example.smartnavigation.api.request.AddFacilityRequest
 import com.example.smartnavigation.api.request.LoginRequest
 import com.example.smartnavigation.api.request.RegisterRequest
@@ -86,6 +87,12 @@ class MainViewModel : ViewModel() {
             } catch (e: Exception) {
                 e.printStackTrace()
             }
+        }
+    }
+
+    suspend fun addClassSchedule(request: AddClassScheduleRequest) {
+        withContext(Dispatchers.IO) {
+            smartNavigationApi.addClassSchedule(request)
         }
     }
 }

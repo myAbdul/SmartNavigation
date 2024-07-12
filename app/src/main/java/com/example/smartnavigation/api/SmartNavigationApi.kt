@@ -1,8 +1,10 @@
 package com.example.smartnavigation.api
 
+import com.example.smartnavigation.api.request.AddClassScheduleRequest
 import com.example.smartnavigation.api.request.AddFacilityRequest
 import com.example.smartnavigation.api.request.LoginRequest
 import com.example.smartnavigation.api.request.RegisterRequest
+import com.example.smartnavigation.api.response.AddClassScheduleResponse
 import com.example.smartnavigation.api.response.AddFacilityResponse
 import com.example.smartnavigation.api.response.GetClassScheduleFormDataResponse
 import com.example.smartnavigation.api.response.RegisterResponse
@@ -33,5 +35,8 @@ interface SmartNavigationApi {
 
     @GET("get_class_schedule_form_data")
     suspend fun getClassScheduleFormData(): GetClassScheduleFormDataResponse
+
+    @POST("add_class_schedule")
+    suspend fun addClassSchedule(@Body request: AddClassScheduleRequest): AddClassScheduleResponse
 
 }
