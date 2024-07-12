@@ -174,28 +174,28 @@ fun AddFacilityScreen(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         if (loading) {
-                            Text(loadingText)
+                            Text(loadingText, modifier = Modifier.padding(4.dp))
                             CircularProgressIndicator(
                                 modifier = Modifier
-                                    .padding(8.dp)
+                                    .padding(start = 8.dp)
                                     .width(24.dp)
                                     .height(24.dp),
                                 color = MaterialTheme.colorScheme.secondary,
                                 trackColor = MaterialTheme.colorScheme.surfaceVariant,
                             )
                         } else {
-                            Text("Add")
+                            Text("Add", modifier = Modifier.padding(4.dp))
                         }
                     }
                 }
             } else {
                 Text(
-                    text = "Location permission required for this feature to be available.\nPlease grant the permission.",
+                    text = "Location and camera permissions are required for this feature.\nPlease grant the permissions.",
                     textAlign = TextAlign.Center
                 )
                 Spacer(modifier = Modifier.height(32.dp))
                 Button(onClick = { permissionState.launchMultiplePermissionRequest() }) {
-                    Text(text = "Request permission")
+                    Text(text = "Request permission", modifier = Modifier.padding(4.dp))
                 }
             }
         }

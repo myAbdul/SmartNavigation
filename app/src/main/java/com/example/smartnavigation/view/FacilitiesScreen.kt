@@ -19,7 +19,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Image
-import androidx.compose.material.icons.filled.LocationOn
+import androidx.compose.material.icons.outlined.LocationOn
 import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FloatingActionButton
@@ -66,65 +66,77 @@ fun FacilitiesScreen(navController: NavHostController, viewModel: MainViewModel)
                     .align(Alignment.TopCenter)
             )
         } else {
-            LazyColumn(
-                Modifier
-                    .padding(defaultPadding)
-                    .fillMaxSize(),
-                horizontalAlignment = Alignment.CenterHorizontally,
-            ) {
-                items(viewModel.facilityList) { facility ->
-                    val image = facility.image?.let { decodeImage(it) }
-                    Card(
-                        modifier = Modifier
-                            .padding(defaultPadding)
-                            .fillMaxWidth(),
-                    ) {
-                        Column(
+            if (viewModel.facilityList.isEmpty()) {
+                Text(
+                    modifier = Modifier
+                        .padding(defaultPadding)
+                        .align(Alignment.TopCenter),
+                    text = "No facility found...",
+                )
+            } else {
+                LazyColumn(
+                    Modifier
+                        .padding(defaultPadding)
+                        .fillMaxSize(),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                ) {
+                    items(viewModel.facilityList) { facility ->
+                        val image = facility.image?.let { decodeImage(it) }
+                        Card(
                             modifier = Modifier
-                                .fillMaxWidth()
                                 .padding(defaultPadding)
+                                .fillMaxWidth(),
                         ) {
-                            Row(
-                                Modifier
+                            Column(
+                                modifier = Modifier
+                                    .fillMaxWidth()
                                     .padding(defaultPadding)
-                                    .fillMaxWidth(),
-                                horizontalArrangement = Arrangement.SpaceBetween
                             ) {
-                                Text(modifier = Modifier.padding(end = 8.dp), text = facility.name)
-                                Icon(
-                                    modifier = Modifier.clickable {
-                                        val intent = Intent(Intent.ACTION_VIEW).apply {
-                                            data =
-                                                Uri.parse("geo:${facility.latitude},${facility.longitude}")
-                                        }
-                                        context.startActivity(intent)
-                                    },
-                                    imageVector = Icons.Filled.LocationOn,
-                                    contentDescription = ""
-                                )
-                            }
-                            if (image != null) {
-                                Image(
-                                    modifier = Modifier
+                                Row(
+                                    Modifier
                                         .padding(defaultPadding)
-                                        .fillMaxWidth()
-                                        .height(200.dp)
-                                        .clip(RoundedCornerShape(16.dp)),
-                                    bitmap = image.asImageBitmap(),
-                                    contentDescription = "",
-                                    contentScale = ContentScale.Crop
-                                )
-                            } else {
-                                Image(
-                                    modifier = Modifier
-                                        .padding(4.dp)
-                                        .fillMaxWidth()
-                                        .height(200.dp)
-                                        .clip(RoundedCornerShape(16.dp)),
-                                    imageVector = Icons.Filled.Image,
-                                    contentDescription = "",
-                                    contentScale = ContentScale.Crop
-                                )
+                                        .fillMaxWidth(),
+                                    horizontalArrangement = Arrangement.SpaceBetween
+                                ) {
+                                    Text(
+                                        modifier = Modifier.padding(end = 8.dp),
+                                        text = facility.name
+                                    )
+                                    Icon(
+                                        modifier = Modifier.clickable {
+                                            val intent = Intent(Intent.ACTION_VIEW).apply {
+                                                data =
+                                                    Uri.parse("geo:${facility.latitude},${facility.longitude}")
+                                            }
+                                            context.startActivity(intent)
+                                        },
+                                        imageVector = Icons.Outlined.LocationOn,
+                                        contentDescription = ""
+                                    )
+                                }
+                                if (image != null) {
+                                    Image(
+                                        modifier = Modifier
+                                            .padding(defaultPadding)
+                                            .fillMaxWidth()
+                                            .height(200.dp)
+                                            .clip(RoundedCornerShape(16.dp)),
+                                        bitmap = image.asImageBitmap(),
+                                        contentDescription = "",
+                                        contentScale = ContentScale.Crop
+                                    )
+                                } else {
+                                    Image(
+                                        modifier = Modifier
+                                            .padding(4.dp)
+                                            .fillMaxWidth()
+                                            .height(200.dp)
+                                            .clip(RoundedCornerShape(16.dp)),
+                                        imageVector = Icons.Filled.Image,
+                                        contentDescription = "",
+                                        contentScale = ContentScale.Crop
+                                    )
+                                }
                             }
                         }
                     }

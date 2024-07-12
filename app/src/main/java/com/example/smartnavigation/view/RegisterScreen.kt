@@ -149,15 +149,15 @@ fun RegisterScreen(navController: NavHostController, viewModel: MainViewModel) {
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     if (loading) {
-                        Text("Registering...")
+                        Text("Registering...", modifier = Modifier.padding(4.dp))
                         CircularProgressIndicator(
                             modifier = Modifier
-                                .padding(8.dp)
+                                .padding(start = 8.dp)
                                 .width(24.dp)
                                 .height(24.dp),
                         )
                     } else {
-                        Text("Register")
+                        Text("Register", modifier = Modifier.padding(4.dp))
                     }
                 }
             }

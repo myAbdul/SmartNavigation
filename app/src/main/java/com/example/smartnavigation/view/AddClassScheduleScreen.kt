@@ -122,7 +122,7 @@ fun AddClassScheduleScreen(
                         .menuAnchor(),
                     value = selectedCollege.name,
                     onValueChange = { },
-                    label = { Text("College") },
+                    label = { Text("School") },
                     trailingIcon = {
                         ExposedDropdownMenuDefaults.TrailingIcon(
                             expanded = collegeIsExpanded
@@ -345,17 +345,17 @@ fun AddClassScheduleScreen(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     if (loading) {
-                        Text("Adding facility...")
+                        Text("Adding facility...", modifier = Modifier.padding(4.dp))
                         CircularProgressIndicator(
                             modifier = Modifier
-                                .padding(8.dp)
+                                .padding(start = 8.dp)
                                 .width(24.dp)
                                 .height(24.dp),
                             color = MaterialTheme.colorScheme.secondary,
                             trackColor = MaterialTheme.colorScheme.surfaceVariant,
                         )
                     } else {
-                        Text("Add")
+                        Text("Add", modifier = Modifier.padding(4.dp))
                     }
                 }
             }

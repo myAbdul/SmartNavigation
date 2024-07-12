@@ -56,7 +56,6 @@ fun ClassSchedulesScreen(navController: NavHostController, viewModel: MainViewMo
     var selectedDepartment by remember { mutableStateOf(emptyDepartment) }
     var programIsExpanded by remember { mutableStateOf(false) }
     var selectedProgram by remember { mutableStateOf(emptyProgram) }
-    var loading by remember { mutableStateOf(false) }
 
     Box(
         modifier = Modifier
@@ -82,7 +81,7 @@ fun ClassSchedulesScreen(navController: NavHostController, viewModel: MainViewMo
                         .menuAnchor(),
                     value = selectedCollege.name,
                     onValueChange = { },
-                    label = { Text("College") },
+                    label = { Text("School") },
                     trailingIcon = {
                         ExposedDropdownMenuDefaults.TrailingIcon(
                             expanded = collegeIsExpanded
@@ -105,6 +104,9 @@ fun ClassSchedulesScreen(navController: NavHostController, viewModel: MainViewMo
                                 selectedProgram =
                                     viewModel.programList.firstOrNull { it.departmentId == selectedDepartment.departmentId }
                                         ?: emptyProgram
+                                coroutineScope.launch {
+                                    viewModel.getClassSchedules(selectedProgram.programId)
+                                }
                                 collegeIsExpanded = false
                             },
                             text = {
@@ -149,6 +151,9 @@ fun ClassSchedulesScreen(navController: NavHostController, viewModel: MainViewMo
                                     selectedProgram =
                                         viewModel.programList.firstOrNull { it.departmentId == selectedDepartment.departmentId }
                                             ?: emptyProgram
+                                    coroutineScope.launch {
+                                        viewModel.getClassSchedules(selectedProgram.programId)
+                                    }
                                     departmentIsExpanded = false
                                 },
                                 text = {
@@ -192,9 +197,7 @@ fun ClassSchedulesScreen(navController: NavHostController, viewModel: MainViewMo
                                     selectedProgram = option
                                     programIsExpanded = false
                                     coroutineScope.launch {
-                                        loading = true
                                         viewModel.getClassSchedules(selectedProgram.programId)
-                                        loading = false
                                     }
                                 },
                                 text = {
@@ -205,7 +208,7 @@ fun ClassSchedulesScreen(navController: NavHostController, viewModel: MainViewMo
                 }
             }
 
-            if (loading) {
+            if (viewModel.loading) {
                 CircularProgressIndicator(
                     modifier = Modifier
                         .padding(top = 48.dp)
@@ -213,39 +216,47 @@ fun ClassSchedulesScreen(navController: NavHostController, viewModel: MainViewMo
                         .height(24.dp)
                 )
             } else {
-                LazyColumn(
-                    Modifier
-                        .padding(defaultPadding)
-                        .fillMaxSize(),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                ) {
-                    items(viewModel.classScheduleList) { classSchedule ->
-                        Card(
-                            modifier = Modifier
-                                .padding(defaultPadding)
-                                .fillMaxWidth(),
-                        ) {
-                            Column(
+                if (viewModel.classScheduleList.isEmpty()) {
+                    Text(
+                        modifier = Modifier
+                            .padding(top = 48.dp),
+                        text = "No class schedule found...",
+                    )
+                } else {
+                    LazyColumn(
+                        Modifier
+                            .padding(defaultPadding)
+                            .fillMaxSize(),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                    ) {
+                        items(viewModel.classScheduleList) { classSchedule ->
+                            Card(
                                 modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(16.dp)
+                                    .padding(defaultPadding)
+                                    .fillMaxWidth(),
                             ) {
-                                Text(
-                                    modifier = Modifier.fillMaxWidth(),
-                                    text = "Course Name: ${classSchedule.courseName}"
-                                )
-                                Text(
+                                Column(
                                     modifier = Modifier
                                         .fillMaxWidth()
-                                        .padding(top = 4.dp),
-                                    text = "Day: ${classSchedule.day}"
-                                )
-                                Text(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(top = 4.dp),
-                                    text = "Time: ${classSchedule.time}"
-                                )
+                                        .padding(16.dp)
+                                ) {
+                                    Text(
+                                        modifier = Modifier.fillMaxWidth(),
+                                        text = "Course Name: ${classSchedule.courseName}"
+                                    )
+                                    Text(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(top = 4.dp),
+                                        text = "Day: ${classSchedule.day}"
+                                    )
+                                    Text(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(top = 4.dp),
+                                        text = "Time: ${classSchedule.time}"
+                                    )
+                                }
                             }
                         }
                     }
@@ -275,11 +286,7 @@ fun ClassSchedulesScreen(navController: NavHostController, viewModel: MainViewMo
             viewModel.programList.firstOrNull { it.departmentId == selectedDepartment.departmentId }
                 ?: emptyProgram
 
-        if (selectedProgram.programId != 0) {
-            loading = true
-            viewModel.getClassSchedules(selectedProgram.programId)
-            loading = false
-        }
+        viewModel.getClassSchedules(selectedProgram.programId)
     }
 }
 

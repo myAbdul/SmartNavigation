@@ -104,17 +104,17 @@ fun LoginScreen(navController: NavHostController, viewModel: MainViewModel) {
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     if (loading) {
-                        Text("Signing in...")
+                        Text("Signing in...", modifier = Modifier.padding(4.dp))
                         CircularProgressIndicator(
                             modifier = Modifier
-                                .padding(8.dp)
+                                .padding(start = 8.dp)
                                 .width(24.dp)
                                 .height(24.dp),
                             color = MaterialTheme.colorScheme.secondary,
                             trackColor = MaterialTheme.colorScheme.surfaceVariant,
                         )
                     } else {
-                        Text("Login")
+                        Text("Login", modifier = Modifier.padding(4.dp))
                     }
                 }
             }

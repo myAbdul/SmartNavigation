@@ -31,6 +31,7 @@ class MainViewModel : ViewModel() {
     var programList: List<Program> by mutableStateOf(listOf())
     var collegeList: List<College> by mutableStateOf(listOf())
     var departmentList: List<Department> by mutableStateOf(listOf())
+    var loading by mutableStateOf(false)
 
     suspend fun login(request: LoginRequest) {
         withContext(Dispatchers.IO) {
@@ -69,11 +70,13 @@ class MainViewModel : ViewModel() {
 
     suspend fun getClassSchedules(programId: Int) {
         withContext(Dispatchers.IO) {
+            loading = true
             try {
                 classScheduleList = smartNavigationApi.getClassSchedules(programId)
             } catch (e: Exception) {
                 e.printStackTrace()
             }
+            loading = false
         }
     }
 
