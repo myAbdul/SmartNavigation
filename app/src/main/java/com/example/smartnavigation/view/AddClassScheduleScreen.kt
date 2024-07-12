@@ -50,7 +50,6 @@ import com.example.smartnavigation.MainViewModel
 import com.example.smartnavigation.api.request.AddClassScheduleRequest
 import com.example.smartnavigation.model.College
 import com.example.smartnavigation.model.Department
-import com.example.smartnavigation.model.Program
 import com.example.smartnavigation.theme.SmartNavigationTheme
 import com.example.smartnavigation.theme.defaultPadding
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
@@ -89,7 +88,6 @@ fun AddClassScheduleScreen(
         val coroutineScope = rememberCoroutineScope()
         val emptyDepartment = Department(0, 0, "")
         val emptyCollege = College(0, "")
-        val emptyProgram = Program(0, 0, "")
         var collegeIsExpanded by remember { mutableStateOf(false) }
         var selectedCollege by remember { mutableStateOf(emptyCollege) }
         var departmentIsExpanded by remember { mutableStateOf(false) }

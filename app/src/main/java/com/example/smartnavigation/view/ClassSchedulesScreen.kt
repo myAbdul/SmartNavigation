@@ -274,6 +274,12 @@ fun ClassSchedulesScreen(navController: NavHostController, viewModel: MainViewMo
         selectedProgram =
             viewModel.programList.firstOrNull { it.departmentId == selectedDepartment.departmentId }
                 ?: emptyProgram
+
+        if (selectedProgram.programId != 0) {
+            loading = true
+            viewModel.getClassSchedules(selectedProgram.programId)
+            loading = false
+        }
     }
 }
 

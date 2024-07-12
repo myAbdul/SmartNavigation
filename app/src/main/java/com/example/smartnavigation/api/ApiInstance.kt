@@ -14,7 +14,7 @@ object ApiInstance {
     }.build()
 
     private val retrofit: Retrofit = Retrofit.Builder()
-        .baseUrl("http://10.0.0.5:8888/smart-navigation-api/")
+        .baseUrl("http://smart-navigation-api.libascatering.com.au/")
         .client(client)
         .addConverterFactory(GsonConverterFactory.create())
         .build()
