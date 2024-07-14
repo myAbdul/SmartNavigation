@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.CircularProgressIndicator
@@ -57,8 +58,8 @@ fun LoginScreen(navController: NavHostController, viewModel: MainViewModel) {
             .fillMaxWidth()
         var username by remember { mutableStateOf("") }
         var password by remember { mutableStateOf("") }
-        var loading by remember { mutableStateOf(false) }
         val coroutineScope = rememberCoroutineScope()
+        var showErrorDialog by remember { mutableStateOf(false) }
         Column(
             Modifier
                 .padding(innerPadding)
@@ -84,16 +85,14 @@ fun LoginScreen(navController: NavHostController, viewModel: MainViewModel) {
             Button(
                 modifier = modifier,
                 onClick = {
-                    if (!loading) {
+                    if (!viewModel.loading) {
                         coroutineScope.launch {
-                            loading = true
-                            try {
-                                viewModel.login(LoginRequest(username, password))
+                            val result = viewModel.login(LoginRequest(username, password))
+                            if (result){
                                 navController.navigate(NavRoutes.HOME)
-                            } catch (e: Exception) {
-                                e.printStackTrace()
+                            } else{
+                                showErrorDialog=true
                             }
-                            loading = false
                         }
                     }
                 },
@@ -103,7 +102,7 @@ fun LoginScreen(navController: NavHostController, viewModel: MainViewModel) {
                     horizontalArrangement = Arrangement.Center,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    if (loading) {
+                    if (viewModel.loading) {
                         Text("Signing in...", modifier = Modifier.padding(4.dp))
                         CircularProgressIndicator(
                             modifier = Modifier
@@ -123,6 +122,22 @@ fun LoginScreen(navController: NavHostController, viewModel: MainViewModel) {
             }) {
                 Text("Register")
             }
+        }
+
+        if (showErrorDialog) {
+            AlertDialog(title = {
+                Text(text = "Error")
+            }, text = {
+                Text(text = viewModel.errorMessage)
+            }, onDismissRequest = {
+                showErrorDialog = false
+            }, confirmButton = {
+                TextButton(onClick = {
+                    showErrorDialog = false
+                }) {
+                    Text("Confirm")
+                }
+            })
         }
     }
 }

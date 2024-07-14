@@ -14,6 +14,7 @@ import androidx.compose.material.Text as TextM1
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Business
 import androidx.compose.material.icons.filled.Class
+import androidx.compose.material.icons.filled.Event
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
@@ -41,6 +42,7 @@ import com.example.smartnavigation.theme.SmartNavigationTheme
 sealed class HomeScreen(val route: String, val title: String, val imageVector: ImageVector) {
     data object ClassSchedules : HomeScreen("classSchedules", "Timetable", Icons.Filled.Class)
     data object Facilities : HomeScreen("facilities", "Facilities", Icons.Filled.Business)
+    data object CampusEvents : HomeScreen("campusEvents", "Events", Icons.Filled.Event)
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -49,6 +51,7 @@ fun HomeScreen(navController: NavHostController, viewModel: MainViewModel) {
     val screenList = listOf(
         HomeScreen.ClassSchedules,
         HomeScreen.Facilities,
+        HomeScreen.CampusEvents
     )
     val homeNavController = rememberNavController()
     val navBackStackEntry by homeNavController.currentBackStackEntryAsState()
@@ -100,11 +103,14 @@ fun HomeScreen(navController: NavHostController, viewModel: MainViewModel) {
                 .padding(innerPadding)
         ) {
             composable(HomeScreen.ClassSchedules.route) {
-                ClassSchedulesScreen(
-                    navController, viewModel
-                )
+                ClassSchedulesScreen(navController, viewModel)
             }
-            composable(HomeScreen.Facilities.route) { FacilitiesScreen(navController, viewModel) }
+            composable(HomeScreen.Facilities.route) {
+                FacilitiesScreen(navController, viewModel)
+            }
+            composable(HomeScreen.CampusEvents.route) {
+                CampusEventsScreen(navController, viewModel)
+            }
         }
     }
 }

@@ -7,5 +7,6 @@ data class AddClassScheduleRequest(
     @SerializedName("program_name") val programName: String,
     @SerializedName("course_name") val courseName: String,
     val day: String,
-    val time: String
+    val time: String,
+    @SerializedName("user_id") val userId: Int
 )

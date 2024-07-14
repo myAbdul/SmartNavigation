@@ -5,6 +5,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.example.smartnavigation.MainViewModel
+import com.example.smartnavigation.view.AddCampusEventScreen
 import com.example.smartnavigation.view.AddClassScheduleScreen
 import com.example.smartnavigation.view.AddFacilityScreen
 import com.example.smartnavigation.view.CameraScreen
@@ -18,6 +19,7 @@ object NavRoutes {
     const val HOME = "home"
     const val ADD_FACILITY = "add_facility"
     const val ADD_CLASS_SCHEDULE = "add_class_schedule"
+    const val ADD_CAMPUS_EVENT = "add_campus_event"
     const val CAMERA = "camera"
 }
 
@@ -43,6 +45,9 @@ fun NavHost(
         }
         composable(NavRoutes.ADD_CLASS_SCHEDULE) {
             AddClassScheduleScreen(navController, viewModel)
+        }
+        composable(NavRoutes.ADD_CAMPUS_EVENT) {
+            AddCampusEventScreen(navController, viewModel)
         }
     }
 }

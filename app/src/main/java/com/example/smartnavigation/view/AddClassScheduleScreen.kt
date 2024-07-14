@@ -320,7 +320,8 @@ fun AddClassScheduleScreen(
                                             selectedProgram.trim(),
                                             courseName.trim(),
                                             selectedDay,
-                                            time
+                                            time,
+                                            viewModel.user?.userId ?: 0
                                         )
                                     )
                                     Toast.makeText(

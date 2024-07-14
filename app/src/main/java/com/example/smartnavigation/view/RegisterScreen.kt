@@ -1,5 +1,6 @@
 package com.example.smartnavigation.view
 
+import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -11,6 +12,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.CircularProgressIndicator
@@ -20,6 +22,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -28,6 +31,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
@@ -35,7 +39,6 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.smartnavigation.MainViewModel
-import com.example.smartnavigation.api.request.RegisterRequest
 import com.example.smartnavigation.theme.SmartNavigationTheme
 import kotlinx.coroutines.launch
 
@@ -63,16 +66,17 @@ fun RegisterScreen(navController: NavHostController, viewModel: MainViewModel) {
         val modifier = Modifier
             .padding(8.dp)
             .fillMaxWidth()
+        val context = LocalContext.current
         var firstName by remember { mutableStateOf("") }
         var lastName by remember { mutableStateOf("") }
         var username by remember { mutableStateOf("") }
         var password by remember { mutableStateOf("") }
         var confirmPassword by remember { mutableStateOf("") }
         var loading by remember { mutableStateOf(false) }
+        var showErrorDialog by remember { mutableStateOf(false) }
         val coroutineScope = rememberCoroutineScope()
         Column(
-            modifier
-                .padding(innerPadding),
+            modifier.padding(innerPadding),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
@@ -115,29 +119,16 @@ fun RegisterScreen(navController: NavHostController, viewModel: MainViewModel) {
                 onClick = {
                     if (!loading) {
                         coroutineScope.launch {
-                            if (validateInputs(
-                                    firstName,
-                                    lastName,
-                                    username,
-                                    password,
-                                    confirmPassword
-                                )
-                            ) {
-                                loading = true
-                                try {
-                                    viewModel.register(
-                                        RegisterRequest(
-                                            firstName,
-                                            lastName,
-                                            username,
-                                            password
-                                        )
-                                    )
-                                    navController.popBackStack()
-                                } catch (e: Exception) {
-                                    e.printStackTrace()
-                                }
-                                loading = false
+                            val result = viewModel.register(
+                                firstName, lastName, username, password, confirmPassword
+                            )
+                            if (result) {
+                                navController.popBackStack()
+                                Toast.makeText(
+                                    context, "User registered successfully!", Toast.LENGTH_LONG
+                                ).show()
+                            } else {
+                                showErrorDialog = true
                             }
                         }
                     }
@@ -162,28 +153,22 @@ fun RegisterScreen(navController: NavHostController, viewModel: MainViewModel) {
                 }
             }
         }
-    }
-}
 
-private fun validateInputs(
-    firstName: String,
-    lastName: String,
-    username: String,
-    password: String,
-    confirmPassword: String,
-): Boolean {
-    return if (firstName.isBlank()) {
-        false
-    } else if (lastName.isBlank()) {
-        false
-    } else if (username.trim().length < 3) {
-        false
-    } else if (username.trim().any { !it.isLetterOrDigit() }) {
-        false
-    } else if (password.trim().length < 5 || password != confirmPassword) {
-        false
-    } else {
-        true
+        if (showErrorDialog) {
+            AlertDialog(title = {
+                Text(text = "Error")
+            }, text = {
+                Text(text = viewModel.errorMessage)
+            }, onDismissRequest = {
+                showErrorDialog = false
+            }, confirmButton = {
+                TextButton(onClick = {
+                    showErrorDialog = false
+                }) {
+                    Text("Confirm")
+                }
+            })
+        }
     }
 }
 
