@@ -17,6 +17,7 @@ import com.example.smartnavigation.model.ClassSchedule
 import com.example.smartnavigation.model.College
 import com.example.smartnavigation.model.Department
 import com.example.smartnavigation.model.Facility
+import com.example.smartnavigation.model.Level
 import com.example.smartnavigation.model.Program
 import com.example.smartnavigation.model.User
 import kotlinx.coroutines.Dispatchers
@@ -33,6 +34,7 @@ class MainViewModel : ViewModel() {
     var programList: List<Program> by mutableStateOf(listOf())
     var collegeList: List<College> by mutableStateOf(listOf())
     var departmentList: List<Department> by mutableStateOf(listOf())
+    var levelList: List<Level> by mutableStateOf(listOf())
     var loading by mutableStateOf(false)
     var campusEventList: List<CampusEvent> by mutableStateOf(listOf())
     var errorMessage: String by mutableStateOf("")
@@ -114,11 +116,16 @@ class MainViewModel : ViewModel() {
         }
     }
 
-    suspend fun getClassSchedules(programId: Int) {
+    suspend fun getClassSchedules(programId: Int, levelId: Int) {
         withContext(Dispatchers.IO) {
             loading = true
             try {
-                classScheduleList = smartNavigationApi.getClassSchedules(programId)
+                classScheduleList = smartNavigationApi.getClassSchedules(
+                    mapOf(
+                        "program_id" to programId,
+                        "level_id" to levelId
+                    )
+                )
             } catch (e: Exception) {
                 e.printStackTrace()
             }
@@ -133,6 +140,7 @@ class MainViewModel : ViewModel() {
                 programList = response.allPrograms
                 collegeList = response.allColleges
                 departmentList = response.allDepartments
+                levelList = response.allLevels
             } catch (e: Exception) {
                 e.printStackTrace()
             }

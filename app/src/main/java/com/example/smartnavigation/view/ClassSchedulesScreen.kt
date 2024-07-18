@@ -1,7 +1,9 @@
 package com.example.smartnavigation.view
 
+import android.util.Log
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -11,6 +13,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenuItem
@@ -37,6 +40,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.smartnavigation.MainViewModel
 import com.example.smartnavigation.model.College
 import com.example.smartnavigation.model.Department
+import com.example.smartnavigation.model.Level
 import com.example.smartnavigation.model.Program
 import com.example.smartnavigation.navigate.NavRoutes
 import com.example.smartnavigation.theme.SmartNavigationTheme
@@ -50,12 +54,15 @@ fun ClassSchedulesScreen(navController: NavHostController, viewModel: MainViewMo
     val emptyDepartment = Department(0, 0, "")
     val emptyCollege = College(0, "")
     val emptyProgram = Program(0, 0, "")
+    val emptyLevel = Level(0, "")
     var collegeIsExpanded by remember { mutableStateOf(false) }
     var selectedCollege by remember { mutableStateOf(emptyCollege) }
     var departmentIsExpanded by remember { mutableStateOf(false) }
     var selectedDepartment by remember { mutableStateOf(emptyDepartment) }
     var programIsExpanded by remember { mutableStateOf(false) }
     var selectedProgram by remember { mutableStateOf(emptyProgram) }
+    var levelIsExpanded by remember { mutableStateOf(false) }
+    var selectedLevel by remember { mutableStateOf(emptyLevel) }
 
     Box(
         modifier = Modifier
@@ -63,8 +70,7 @@ fun ClassSchedulesScreen(navController: NavHostController, viewModel: MainViewMo
             .padding(defaultPadding)
     ) {
         Column(
-            Modifier
-                .fillMaxSize(),
+            Modifier.fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             ExposedDropdownMenuBox(
@@ -104,9 +110,7 @@ fun ClassSchedulesScreen(navController: NavHostController, viewModel: MainViewMo
                                 selectedProgram =
                                     viewModel.programList.firstOrNull { it.departmentId == selectedDepartment.departmentId }
                                         ?: emptyProgram
-                                coroutineScope.launch {
-                                    viewModel.getClassSchedules(selectedProgram.programId)
-                                }
+
                                 collegeIsExpanded = false
                             },
                             text = {
@@ -151,9 +155,6 @@ fun ClassSchedulesScreen(navController: NavHostController, viewModel: MainViewMo
                                     selectedProgram =
                                         viewModel.programList.firstOrNull { it.departmentId == selectedDepartment.departmentId }
                                             ?: emptyProgram
-                                    coroutineScope.launch {
-                                        viewModel.getClassSchedules(selectedProgram.programId)
-                                    }
                                     departmentIsExpanded = false
                                 },
                                 text = {
@@ -196,15 +197,72 @@ fun ClassSchedulesScreen(navController: NavHostController, viewModel: MainViewMo
                                 onClick = {
                                     selectedProgram = option
                                     programIsExpanded = false
-                                    coroutineScope.launch {
-                                        viewModel.getClassSchedules(selectedProgram.programId)
-                                    }
                                 },
                                 text = {
                                     Text(text = option.name)
                                 },
                             )
                         }
+                }
+            }
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(defaultPadding),
+                verticalAlignment = Alignment.Bottom
+            ) {
+                ExposedDropdownMenuBox(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(1f),
+                    expanded = levelIsExpanded,
+                    onExpandedChange = { levelIsExpanded = it },
+                ) {
+                    OutlinedTextField(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .menuAnchor(),
+                        readOnly = true,
+                        value = selectedLevel.name,
+                        onValueChange = {},
+                        label = { Text("Level") },
+                        trailingIcon = {
+                            ExposedDropdownMenuDefaults.TrailingIcon(
+                                expanded = levelIsExpanded
+                            )
+                        },
+                    )
+                    ExposedDropdownMenu(modifier = Modifier.fillMaxWidth(),
+                        expanded = levelIsExpanded,
+                        onDismissRequest = {
+                            levelIsExpanded = false
+                        }) {
+                        viewModel.levelList.forEach { option ->
+                            DropdownMenuItem(
+                                modifier = Modifier.fillMaxWidth(),
+                                onClick = {
+                                    selectedLevel = option
+                                    levelIsExpanded = false
+                                },
+                                text = {
+                                    Text(text = option.name)
+                                },
+                            )
+                        }
+                    }
+                }
+                Button(
+                    modifier = Modifier.padding(start = 16.dp),
+                    onClick = {
+                        coroutineScope.launch {
+                            Log.d("Abdul", "ClassSchedulesScreen: ${selectedLevel}")
+                            viewModel.getClassSchedules(
+                                selectedProgram.programId, selectedLevel.levelId
+                            )
+                        }
+                    },
+                ) {
+                    Text("Load", modifier = Modifier.padding(4.dp))
                 }
             }
 
@@ -218,8 +276,7 @@ fun ClassSchedulesScreen(navController: NavHostController, viewModel: MainViewMo
             } else {
                 if (viewModel.classScheduleList.isEmpty()) {
                     Text(
-                        modifier = Modifier
-                            .padding(top = 48.dp),
+                        modifier = Modifier.padding(top = 48.dp),
                         text = "No class schedule found...",
                     )
                 } else {
@@ -285,8 +342,7 @@ fun ClassSchedulesScreen(navController: NavHostController, viewModel: MainViewMo
         selectedProgram =
             viewModel.programList.firstOrNull { it.departmentId == selectedDepartment.departmentId }
                 ?: emptyProgram
-
-        viewModel.getClassSchedules(selectedProgram.programId)
+        selectedLevel = viewModel.levelList.firstOrNull() ?: emptyLevel
     }
 }
 

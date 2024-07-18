@@ -49,52 +49,48 @@ sealed class HomeScreen(val route: String, val title: String, val imageVector: I
 @Composable
 fun HomeScreen(navController: NavHostController, viewModel: MainViewModel) {
     val screenList = listOf(
-        HomeScreen.ClassSchedules,
-        HomeScreen.Facilities,
-        HomeScreen.CampusEvents
+        HomeScreen.ClassSchedules, HomeScreen.Facilities, HomeScreen.CampusEvents
     )
     val homeNavController = rememberNavController()
     val navBackStackEntry by homeNavController.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry?.destination
-    var currentScreen by remember { mutableStateOf(screenList.first()) }
-    Scaffold(
-        topBar = {
-            CenterAlignedTopAppBar(
-                title = {
-                    Text(currentScreen.title)
-                }
-            )
-        },
-        bottomBar = {
-            BottomNavigation(
-                contentColor = Color.White,
-                backgroundColor = Purple40
-            ) {
-                screenList.forEach { screen ->
-                    BottomNavigationItem(
-                        icon = {
-                            IconM1(
-                                screen.imageVector, contentDescription = null
-                            )
-                        },
-                        label = { TextM1(screen.title) },
-                        selected = currentDestination?.hierarchy?.any { it.route == screen.route } == true,
-                        onClick = {
-                            homeNavController.navigate(screen.route) {
-                                popUpTo(homeNavController.graph.findStartDestination().id) {
-                                    saveState = true
-                                }
-                                launchSingleTop = true
-                                restoreState = true
-                            }
-                            currentScreen = screen
-                        },
-                        selectedContentColor = Color.White,
-                        unselectedContentColor = Color.White.copy(alpha = 0.5F)
+    var currentScreen by remember {
+        mutableStateOf(screenList.first {
+            it.route == (currentDestination?.route ?: HomeScreen.CampusEvents.route)
+        })
+    }
+    Scaffold(topBar = {
+        CenterAlignedTopAppBar(title = {
+            Text(currentScreen.title)
+        })
+    }, bottomBar = {
+        BottomNavigation(
+            contentColor = Color.White, backgroundColor = Purple40
+        ) {
+            screenList.forEach { screen ->
+                BottomNavigationItem(icon = {
+                    IconM1(
+                        screen.imageVector, contentDescription = null
                     )
-                }
+                },
+                    label = { TextM1(screen.title) },
+                    selected = currentDestination?.hierarchy?.any { it.route == screen.route } == true,
+                    onClick = {
+                        homeNavController.navigate(screen.route) {
+                            popUpTo(homeNavController.graph.findStartDestination().id) {
+                                saveState = true
+                            }
+                            launchSingleTop = true
+                            restoreState = true
+                        }
+                        currentScreen = screen
+                    },
+                    selectedContentColor = Color.White,
+                    unselectedContentColor = Color.White.copy(alpha = 0.5F)
+                )
             }
-        }) { innerPadding ->
+        }
+    }) { innerPadding ->
         NavHost(
             homeNavController,
             startDestination = HomeScreen.ClassSchedules.route,

@@ -17,7 +17,7 @@ import com.example.smartnavigation.model.User
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
-import retrofit2.http.Path
+import retrofit2.http.QueryMap
 
 interface SmartNavigationApi {
 
@@ -33,8 +33,8 @@ interface SmartNavigationApi {
     @GET("get_all_facilities")
     suspend fun getAllFacilities(): List<Facility>
 
-    @GET("get_class_schedules/{program_id}")
-    suspend fun getClassSchedules(@Path("program_id") programId: Int): List<ClassSchedule>
+    @GET("get_class_schedules")
+    suspend fun getClassSchedules(@QueryMap params: Map<String, Int>): List<ClassSchedule>
 
     @GET("get_class_schedule_form_data")
     suspend fun getClassScheduleFormData(): GetClassScheduleFormDataResponse

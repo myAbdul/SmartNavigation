@@ -50,6 +50,7 @@ import com.example.smartnavigation.MainViewModel
 import com.example.smartnavigation.api.request.AddClassScheduleRequest
 import com.example.smartnavigation.model.College
 import com.example.smartnavigation.model.Department
+import com.example.smartnavigation.model.Level
 import com.example.smartnavigation.theme.SmartNavigationTheme
 import com.example.smartnavigation.theme.defaultPadding
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
@@ -88,12 +89,15 @@ fun AddClassScheduleScreen(
         val coroutineScope = rememberCoroutineScope()
         val emptyDepartment = Department(0, 0, "")
         val emptyCollege = College(0, "")
+        val emptyLevel = Level(0, "")
         var collegeIsExpanded by remember { mutableStateOf(false) }
         var selectedCollege by remember { mutableStateOf(emptyCollege) }
         var departmentIsExpanded by remember { mutableStateOf(false) }
         var selectedDepartment by remember { mutableStateOf(emptyDepartment) }
         var programIsExpanded by remember { mutableStateOf(false) }
         var selectedProgram by remember { mutableStateOf("") }
+        var levelIsExpanded by remember { mutableStateOf(false) }
+        var selectedLevel by remember { mutableStateOf(emptyLevel) }
         var dayIsExpanded by remember { mutableStateOf(false) }
         var selectedDay by remember { mutableStateOf("") }
         var courseName by remember { mutableStateOf("") }
@@ -241,6 +245,46 @@ fun AddClassScheduleScreen(
                         }
                 }
             }
+            ExposedDropdownMenuBox(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(defaultPadding),
+                expanded = levelIsExpanded,
+                onExpandedChange = { levelIsExpanded = it },
+            ) {
+                OutlinedTextField(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .menuAnchor(),
+                    readOnly = true,
+                    value = selectedLevel.name,
+                    onValueChange = {},
+                    label = { Text("Level") },
+                    trailingIcon = {
+                        ExposedDropdownMenuDefaults.TrailingIcon(
+                            expanded = levelIsExpanded
+                        )
+                    },
+                )
+                ExposedDropdownMenu(modifier = Modifier.fillMaxWidth(),
+                    expanded = levelIsExpanded,
+                    onDismissRequest = {
+                        levelIsExpanded = false
+                    }) {
+                    viewModel.levelList.forEach { option ->
+                        DropdownMenuItem(
+                            modifier = Modifier.fillMaxWidth(),
+                            onClick = {
+                                selectedLevel = option
+                                levelIsExpanded = false
+                            },
+                            text = {
+                                Text(text = option.name)
+                            },
+                        )
+                    }
+                }
+            }
             OutlinedTextField(
                 modifier = modifier,
                 value = courseName,
@@ -308,7 +352,7 @@ fun AddClassScheduleScreen(
                 modifier = modifier,
                 onClick = {
                     if (!loading) {
-                        if (selectedDepartment.departmentId != 0 && selectedProgram.isNotBlank() && courseName.isNotBlank() && selectedDay.isNotBlank() && time
+                        if (selectedDepartment.departmentId != 0 && selectedProgram.isNotBlank() && selectedLevel.levelId > 0 && courseName.isNotBlank() && selectedDay.isNotBlank() && time
                                 .isNotBlank()
                         ) {
                             coroutineScope.launch {
@@ -318,6 +362,7 @@ fun AddClassScheduleScreen(
                                         AddClassScheduleRequest(
                                             selectedDepartment.departmentId,
                                             selectedProgram.trim(),
+                                            selectedLevel.levelId,
                                             courseName.trim(),
                                             selectedDay,
                                             time,
